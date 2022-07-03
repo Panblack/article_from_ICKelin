@@ -55,6 +55,7 @@ ip addr add 10.20.20.40/24 dev veth2-0
 
 # 创建Linux网桥
 brctl addbr br0
+ip link set dev br0 up
 
 # 将veth添加到网桥当中
 brctl addif br0 veth1-0
@@ -160,6 +161,10 @@ rtt min/avg/max/mdev = 0.157/0.157/0.157/0.000 ms
 
 ## 与外部网络进行通信
 上面解决了netns1和netns2的通信，也解决了和host机的通信，但是没有解决和外部网络的通信。在[《docker网络之veth设备》](docker网络之veth设备.md)当中有提到修改路由下一跳的方式，下一跳指定为veth1-0的ip地址，那么现在把veth1-0的ip地址删了，下一跳没法填了。这个问题需要解决。
+
+首先给宽带路由器添加静态路由：  
+10.20.30.0/24 via hostIP  
+10.20.20.0/24 via hostIP  
 
 可以尝试给br0设置一个地址，让veth1-0的下一跳ip指向br0的ip。
 
